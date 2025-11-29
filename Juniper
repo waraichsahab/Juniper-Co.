@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juniper & Co. | Effortless Elegance, Rooted in Tradition</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Google Fonts: Playfair Display (Serif) and Inter (Sans-Serif) -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        /* Define Custom Colors and Fonts */
+        :root {
+            --color-green: #3A5A40; /* Deep Forest Green */
+            --color-cream: #F8F6F1; /* Soft Cream/Off-White */
+            --color-gold: #B8A682; /* Classic Gold/Brass Accent */
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Inter', sans-serif;
+        }
+
+        /* Apply global styles */
+        body {
+            background-color: var(--color-cream);
+            font-family: var(--font-sans);
+            color: #333; /* Dark text for contrast */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        #app {
+            flex-grow: 1; /* Ensures content fills space above footer */
+        }
+
+        /* Apply Serif font to headings and brand elements */
+        .font-serif-juniper {
+            font-family: var(--font-serif);
+        }
+
+        /* Tailwind custom configuration */
+        .tailwind-green { color: var(--color-green); }
+        .tailwind-bg-green { background-color: var(--color-green); }
+        .tailwind-cream { color: var(--color-cream); }
+        .tailwind-bg-cream { background-color: var(--color-cream); }
+        .tailwind-gold { color: var(--color-gold); }
+        .tailwind-border-gold { border-color: var(--color-gold); }
+
+        /* Product Card Hover Effect */
+        .product-card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            border-radius: 0.75rem; /* Rounded corners for elegance */
+            overflow: hidden;
+            background-color: white; /* Ensure cards stand out slightly */
+            border: 1px solid #eee;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(58, 90, 64, 0.2), 0 4px 6px -2px rgba(58, 90, 64, 0.1);
+        }
+        .product-image-container {
+            overflow: hidden;
+        }
+        .product-image {
+            transition: transform 0.6s ease-in-out;
+        }
+        .product-card:hover .product-image {
+            transform: scale(1.05); /* Simulating a slight angle change/close up */
+        }
+
+        /* Modal styling */
+        .modal {
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(2px);
+        }
+        .tab-btn.active {
+            border-bottom: 2px solid var(--color-gold);
+            color: var(--color-gold);
+            font-weight: 600;
+        }
+
+        /* Checkout Step Indicator */
+        .step {
+            transition: all 0.3s ease;
+        }
+        .step.active .step-circle {
+            background-color: var(--color-green);
+            color: var(--color-cream);
+            border-color: var(--color-green);
+        }
+        .step.complete .step-circle {
+            background-color: var(--color-gold);
+            color: white;
+            border-color: var(--color-gold);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header & Navigation (Sticky and Minimalist) -->
+    <header class="sticky top-0 z-50 shadow-md tailwind-bg-cream border-b border-gray-200">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Left Navigation -->
+            <nav class="flex space-x-4 md:space-x-8 text-sm font-medium">
+                <a href="#" onclick="navigateTo('home')" class="hover:text-gray-500 transition duration-300">Home</a>
+                <!-- Shop Link (Now a dedicated view) -->
+                <a href="#" onclick="navigateTo('shop')" class="hover:text-gray-500 transition duration-300">Shop All</a>
+                <a href="#" class="hidden sm:inline-block hover:text-gray-500 transition duration-300">About Us</a>
+            </nav>
+
+            <!-- Logo (Center) -->
+            <div class="flex-shrink-0">
+                <a href="#" onclick="navigateTo('home')" class="font-serif-juniper text-xl md:text-2xl font-bold tailwind-green">
+                    <!-- Placeholder Logo Image -->
+                    <img src="https://placehold.co/160x40/F8F6F1/3A5A40?text=JUNIPER+%26+Co." alt="Juniper & Co. Logo" class="h-8 md:h-10">
+                </a>
+            </div>
+
+            <!-- Right Utility Icons -->
+            <div class="flex items-center space-x-4 md:space-x-6">
+                <!-- Search Icon -->
+                <button class="tailwind-gold hover:text-gray-600 transition duration-300 p-1 rounded-full" aria-label="Search">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </button>
+                <!-- Admin Panel Icon -->
+                <button id="admin-panel-btn" class="tailwind-gold hover:text-gray-600 transition duration-300 p-1 rounded-full" aria-label="Admin Panel">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                </button>
+                <!-- Cart Icon -->
+                <button onclick="navigateTo('cart')" class="relative tailwind-gold hover:text-gray-600 transition duration-300 p-1 rounded-full" aria-label="Shopping Cart">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <span id="cart-count" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white tailwind-bg-green transform translate-x-1/2 -translate-y-1/2 rounded-full hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container for SPA -->
+    <div id="app">
+        <!-- Loading spinner displayed until data is ready -->
+        <div class="flex items-center justify-center h-[50vh]">
+            <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid opacity-60 border-current border-r-transparent tailwind-green" role="status"></div>
+            <p class="mt-4 text-gray-600 ml-4">Initializing Juniper & Co. data...</p>
+        </div>
+    </div>
+    
+    <!-- Footer (Remains static) -->
+    <footer class="border-t border-gray-200 pt-12 pb-8 tailwind-bg-cream">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <!-- Col 1: Brand & Newsletter -->
+                <div>
+                    <h3 class="font-serif-juniper text-lg mb-4 tailwind-green font-semibold">Stay Connected</h3>
+                    <p class="text-xs text-gray-600 mb-4">Sign up for exclusive news and offers from Juniper & Co.</p>
+                    <form><input type="email" placeholder="Your email address" class="w-full p-2 text-sm rounded-lg border tailwind-border-gold focus:border-green focus:ring-1 focus:ring-green bg-white" required><button type="submit" class="mt-3 w-full p-2 text-xs tailwind-bg-green tailwind-cream font-semibold rounded-lg hover:opacity-90 transition duration-300">Subscribe</button></form>
+                </div>
+                <!-- Col 2: Quick Links -->
+                <div>
+                    <h3 class="font-serif-juniper text-lg mb-4 tailwind-green font-semibold">Explore</h3>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><a href="#" onclick="navigateTo('shop')" class="hover:text-gray-900 transition duration-300">Shop All</a></li>
+                        <li><a href="#" class="hover:text-gray-900 transition duration-300">New Arrivals</a></li>
+                        <li><a href="#" class="hover:text-gray-900 transition duration-300">Lookbook/Journal</a></li>
+                        <li><a href="#" class="hover:text-gray-900 transition duration-300">About Us</a></li>
+                    </ul>
+                </div>
+                <!-- Col 3: Customer Care -->
+                <div>
+                    <h3 class="font-serif-juniper text-lg mb-4 tailwind-green font-semibold">Customer Care</h3>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><a href="#" class="hover:text-gray-900 transition duration-300">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-gray-900 transition duration-300">Shipping & Delivery</a></li>
+                        <li><a href="#" class="hover:text-gray-900 transition duration-300">Returns & Exchange</a></li>
+                        <li><a href="#" class="hover:text-gray-900 transition duration-300">Size Guide (PK Standard)</a></li>
+                        <li><a href="#" class="hover:text-gray-900 transition duration-300">FAQs</a></li>
+                    </ul>
+                </div>
+                <!-- Col 4: Legal & Social -->
+                <div>
+                    <h3 class="font-serif-juniper text-lg mb-4 tailwind-green font-semibold">Information</h3>
+                    <ul class="space-y-2 text-sm text-gray-600 mb-6">
+                        <li><a href="#" class="hover:text-gray-900 transition duration-300">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-gray-900 transition duration-300">Terms & Conditions</a></li>
+                        <li><p class="mt-2 text-xs text-green-700 font-medium">Accepting COD & Nationwide Shipping</p></li>
+                    </ul>
+                    <!-- Social Icons (Gold Accent) -->
+                    <div class="flex space-x-4">
+                        <a href="#" class="tailwind-gold hover:text-gray-900 transition duration-300" aria-label="Instagram">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8a6 6 0 016 6v7a1 1 0 01-1 1H3a1 1 0 01-1-1v-7a6 6 0 016-6h7zM16 8a2 2 0 100-4 2 2 0 000 4zM12 11a3 3 0 100 6 3 3 0 000-6z"/></svg>
+                        </a>
+                        <a href="#" class="tailwind-gold hover:text-gray-900 transition duration-300" aria-label="Facebook">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14 2.186V.13a10.027 10.027 0 00-4 1.156A10.04 10.04 0 002.324 14.73C2.32 18.067 4.9 21.05 7.854 21.848v-8.24h-2.18v-3.32h2.18V7.55c0-2.14 1.258-3.33 3.27-3.33h2.38v3.32h-1.6c-.84 0-.996.39-.996.974v2.246h2.89l-.46 3.32h-2.43v8.24C19.1 21.05 21.68 18.067 21.676 14.73A10.04 10.04 0 0014 2.186z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12 text-center text-xs text-gray-500 border-t pt-4">
+                &copy; 2025 Juniper & Co. All rights reserved. | Designed for the modern Pakistani woman.
+            </div>
+        </div>
+    </footer>
+
+    <!-- 1. Admin Password Gate Modal -->
+    <div id="password-gate-modal" class="modal fixed inset-0 hidden items-center justify-center z-[102]">
+        <div class="tailwind-bg-cream rounded-xl shadow-2xl w-full max-w-sm m-4 p-6 md:p-8 text-center">
+            <h3 class="font-serif-juniper text-2xl tailwind-green font-semibold mb-4">Admin Access Required</h3>
+            <form id="password-form" class="space-y-4">
+                <input type="password" id="admin-password-input" placeholder="Enter Password" required class="w-full p-3 border border-gray-300 rounded-lg text-center" autocomplete="off">
+                <button type="submit" class="w-full py-3 tailwind-bg-green tailwind-cream font-semibold rounded-lg hover:opacity-90 transition duration-300">Unlock Panel</button>
+            </form>
+            <p id="password-message" class="text-sm mt-3 hidden"></p>
+            <button onclick="document.getElementById('password-gate-modal').classList.add('hidden'); document.getElementById('password-gate-modal').classList.remove('flex');" class="text-xs text-gray-500 mt-4 hover:underline">Cancel</button>
+            <!-- HINT DISPLAYED ONLY HERE -->
+            <p class="text-xs text-gray-400 mt-2">Hint: <span class="text-gray-600">juniperadmin123</span></p>
+        </div>
+    </div>
+
+    <!-- 2. Main Admin Panel Modal Structure (for Content Control) -->
+    <div id="admin-modal" class="modal fixed inset-0 hidden items-center justify-center z-[101]">
+        <div class="tailwind-bg-cream rounded-xl shadow-2xl w-full max-w-lg m-4 p-6 md:p-8">
+            <div class="flex justify-between items-center mb-6 border-b pb-3">
+                <h3 id="admin-modal-title" class="font-serif-juniper text-2xl tailwind-green font-semibold">Admin Panel</h3>
+                <button id="close-modal-btn" class="text-gray-600 text-3xl hover:text-red-500 transition duration-300">&times;</button>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="flex border-b border-gray-200 mb-6">
+                <button id="tab-products" class="tab-btn px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition duration-150 active">Product Management</button>
+                <button id="tab-settings" class="tab-btn px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition duration-150">Website Settings</button>
+            </div>
+            
+            <!-- Tab Content: Product Management -->
+            <div id="panel-products" class="tab-content space-y-4">
+                <form id="add-product-form" class="space-y-4">
+                    <p class="text-sm text-gray-500">Add a new product to the collection.</p>
+                    <div><label for="productName" class="block text-sm font-medium tailwind-green">Product Name</label><input type="text" id="productName" required class="mt-1 w-full p-2 border border-gray-300 rounded-lg"></div>
+                    <div><label for="productPrice" class="block text-sm font-medium tailwind-green">Price (PKR)</label><input type="number" id="productPrice" required min="100" class="mt-1 w-full p-2 border border-gray-300 rounded-lg"></div>
+                    <div><label for="productCategory" class="block text-sm font-medium tailwind-green">Category</label><select id="productCategory" required class="mt-1 w-full p-2 border border-gray-300 rounded-lg bg-white"><option value="Unstitched">Unstitched</option><option value="Ready-to-Wear (Prêt)">Ready-to-Wear (Prêt)</option><option value="Formals">Formals</option><option value="Accessories">Accessories</option></select></div>
+                    
+                    <!-- NEW: Product Description -->
+                    <div><label for="productDescription" class="block text-sm font-medium tailwind-green">Product Short Description</label><textarea id="productDescription" rows="2" placeholder="Brief, engaging summary for the shop page." required class="mt-1 w-full p-2 border border-gray-300 rounded-lg"></textarea></div>
+
+                    <!-- NEW: Detailed Specifications (Material, Size Guide, Wash Care) -->
+                    <div><label for="productSpecs" class="block text-sm font-medium tailwind-green">Detailed Specifications (Material, Size, Care)</label><textarea id="productSpecs" rows="4" placeholder="e.g., Fabric: Pure Lawn Cotton | UK Sizes 8-16 | Wash: Handwash only | Includes size chart text." class="mt-1 w-full p-2 border border-gray-300 rounded-lg"></textarea></div>
+                    
+                    <div><label for="productSku" class="block text-sm font-medium tailwind-green">SKU/Code (Optional)</label><input type="text" id="productSku" class="mt-1 w-full p-2 border border-gray-300 rounded-lg"></div>
+                    <div><label for="productImageUrl" class="block text-sm font-medium tailwind-green">Image URL (Placeholder)</label><input type="text" id="productImageUrl" placeholder="e.g., https://placehold.co/400x500/..." class="mt-1 w-full p-2 border border-gray-300 rounded-lg" value="https://placehold.co/400x500/E8E3DA/3A5A40?text=New%20Product%20Image"></div>
+                    <button type="submit" id="submit-product-btn" class="w-full py-2 tailwind-bg-green tailwind-cream font-semibold rounded-lg hover:opacity-90 transition duration-300">Add Product</button>
+                    <div id="form-message-product" class="text-center text-sm mt-3 hidden"></div>
+                </form>
+            </div>
+
+            <!-- Tab Content: Website Settings -->
+            <div id="panel-settings" class="tab-content space-y-4 hidden">
+                <form id="edit-settings-form" class="space-y-4">
+                    <p class="text-sm text-gray-500">Edit key content across the website. Changes apply instantly.</p>
+                    
+                    <div><label for="settingHeroTitle" class="block text-sm font-medium tailwind-green">Hero Section Title</label><input type="text" id="settingHeroTitle" required class="mt-1 w-full p-2 border border-gray-300 rounded-lg"></div>
+                    
+                    <div><label for="settingHeroSubtitle" class="block text-sm font-medium tailwind-green">Hero Section Subtitle</label><input type="text" id="settingHeroSubtitle" required class="mt-1 w-full p-2 border border-gray-300 rounded-lg"></div>
+                    
+                    <div><label for="settingAboutTitle" class="block text-sm font-medium tailwind-green">About Us Block Title</label><input type="text" id="settingAboutTitle" required class="mt-1 w-full p-2 border border-gray-300 rounded-lg"></div>
+
+                    <div><label for="settingAboutText" class="block text-sm font-medium tailwind-green">About Us Block Content</label><textarea id="settingAboutText" rows="4" required class="mt-1 w-full p-2 border border-gray-300 rounded-lg"></textarea></div>
+
+                    <div><label for="settingContactEmail" class="block text-sm font-medium tailwind-green">Contact Email</label><input type="email" id="settingContactEmail" class="mt-1 w-full p-2 border border-gray-300 rounded-lg"></div>
+
+                    <button type="submit" id="submit-settings-btn" class="w-full py-2 tailwind-bg-green tailwind-cream font-semibold rounded-lg hover:opacity-90 transition duration-300">Save Website Settings</button>
+                    <div id="form-message-settings" class="text-center text-sm mt-3 hidden"></div>
+                </form>
+            </div>
+
+            <div id="user-info" class="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-500">
+                <!-- Removed: Admin Key Hint -->
+                <p>User ID: <span id="current-user-id">Loading...</span></p>
+                <p>App ID: <span id="current-app-id">Loading...</span></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 3. Checkout Status Modal (for message display) -->
+    <div id="checkout-status-modal" class="modal fixed inset-0 hidden items-center justify-center z-[102]">
+        <div class="tailwind-bg-cream rounded-xl shadow-2xl w-full max-w-sm m-4 p-6 md:p-8 text-center">
+            <h3 id="checkout-status-title" class="font-serif-juniper text-2xl tailwind-green font-semibold mb-4"></h3>
+            <p id="checkout-status-message" class="text-sm mt-3 mb-6"></p>
+            <button onclick="navigateTo('home'); document.getElementById('checkout-status-modal').classList.add('hidden'); document.getElementById('checkout-status-modal').classList.remove('flex');" class="w-full py-3 tailwind-bg-green tailwind-cream font-semibold rounded-lg hover:opacity-90 transition duration-300">Continue Shopping</button>
+        </div>
+    </div>
+
+
+    <!-- Firebase and Application Logic Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, addDoc, onSnapshot, collection, setLogLevel, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- GLOBAL CONFIG & STATE ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        const ADMIN_PASSWORD = 'juniperadmin123'; // Hardcoded password for the admin gate
+
+        let db;
+        let auth;
+        let userId = null;
+        let allProducts = []; // Stores all products fetched from Firestore
+        let websiteSettings = {}; // Stores all website editable content
+        let currentView = 'home'; // Tracks the current page view (home, shop, cart, product, checkout)
+        let currentProductId = null; // Used for the Product Detail Page
+        let currentCheckoutStep = 1; // 1: Shipping, 2: Review, 3: Confirmation
+        
+        let cart = JSON.parse(localStorage.getItem('juniperCart')) || [];
+        let shippingInfo = JSON.parse(localStorage.getItem('juniperShippingInfo')) || {
+            fullName: '',
+            email: '',
+            phone: '',
+            address: '',
+            city: '',
+            country: 'Pakistan'
+        };
+        // NEW: State for shop filtering
+        let shopFilter = 'All'; 
+
+
+        // DOM Elements
+        const appContainer = document.getElementById('app');
+        const cartCountSpan = document.getElementById('cart-count');
+        const adminModal = document.getElementById('admin-modal');
+        const adminBtn = document.getElementById('admin-panel-btn');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const addProductForm = document.getElementById('add-product-form');
+        const editSettingsForm = document.getElementById('edit-settings-form');
+        const formMessageProduct = document.getElementById('form-message-product');
+        const formMessageSettings = document.getElementById('form-message-settings');
+        const currentUserIdSpan = document.getElementById('current-user-id');
+        const currentAppIdSpan = document.getElementById('current-app-id');
+        const tabProducts = document.getElementById('tab-products');
+        const tabSettings = document.getElementById('tab-settings');
+        const panelProducts = document.getElementById('panel-products');
+        const panelSettings = document.getElementById('panel-settings');
+        const checkoutStatusModal = document.getElementById('checkout-status-modal');
+        
+        // Product form fields
+        const productDescriptionInput = document.getElementById('productDescription');
+        const productSpecsInput = document.getElementById('productSpecs');
+
+        // Password Gate Elements
+        const passwordGateModal = document.getElementById('password-gate-modal');
+        const passwordForm = document.getElementById('password-form');
+        const passwordInput = document.getElementById('admin-password-input');
+        const passwordMessage = document.getElementById('password-message');
+
+        // Settings form fields
+        const settingHeroTitle = document.getElementById('settingHeroTitle');
+        const settingHeroSubtitle = document.getElementById('settingHeroSubtitle');
+        const settingAboutTitle = document.getElementById('settingAboutTitle');
+        const settingAboutText = document.getElementById('settingAboutText');
+        const settingContactEmail = document.getElementById('settingContactEmail');
+
+
+        // Set Firebase log level (recommended for debugging)
+        setLogLevel('debug');
+
+        // --- UTILITY FUNCTIONS ---
+        
+        /** Shows a temporary, non-blocking message (replaces alert()). */
+        function showTemporaryMessage(message, type) {
+            const tempDiv = document.createElement('div');
+            tempDiv.className = `fixed bottom-5 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-xl shadow-2xl z-[103] transition-opacity duration-300 ${type === 'green' ? 'bg-green-700 text-white' : 'bg-red-700 text-white'}`;
+            tempDiv.textContent = message;
+            document.body.appendChild(tempDiv);
+            
+            setTimeout(() => {
+                tempDiv.classList.add('opacity-0');
+                tempDiv.addEventListener('transitionend', () => tempDiv.remove());
+            }, 2500);
+        }
+
+        /** Calculates the total cost of the items in the cart */
+        function calculateCartTotals() {
+            const shipping = 500;
+            const subtotal = cart.reduce((sum, item) => sum + (item.pricePKR * item.quantity), 0);
+            const total = subtotal + shipping;
+            return { subtotal, shipping, total };
+        }
+
+        // --- CART MANAGEMENT ---
+
+        /** Updates the cart count in the header and saves cart to local storage. */
+        function updateCartUI() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCountSpan.textContent = totalItems;
+            if (totalItems > 0) {
+                cartCountSpan.classList.remove('hidden');
+            } else {
+                cartCountSpan.classList.add('hidden');
+            }
+            localStorage.setItem('juniperCart', JSON.stringify(cart));
+            
+            // Re-render relevant pages if necessary
+            if (currentView === 'cart') {
+                renderCartPage(); 
+            } else if (currentView === 'checkout') {
+                // If on checkout review step, re-render
+                if (currentCheckoutStep === 2) renderCheckoutPage(2);
+            }
+        }
+
+        /** Adds a product to the cart or increments its quantity. */
+        window.addToCart = (productId) => {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) {
+                console.error("Product not found:", productId);
+                showTemporaryMessage("Error: Product details missing.", 'red');
+                return;
+            }
+
+            // In a real app, you would select size/color here. For this demo, we add the default product.
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    pricePKR: product.pricePKR,
+                    imageUrl: product.imageUrl,
+                    quantity: 1
+                });
+            }
+            console.log(`Added 1 x ${product.name} to cart.`);
+            showTemporaryMessage(`Added 1 x ${product.name} to cart!`, 'green');
+            updateCartUI();
+        };
+        
+        /** Removes or decreases quantity of an item in the cart */
+        window.updateCartItemQuantity = (productId, change) => {
+            const index = cart.findIndex(item => item.id === productId);
+            if (index === -1) return;
+
+            cart[index].quantity += change;
+
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1); // Remove item if quantity hits zero
+            }
+            updateCartUI();
+        };
+
+        // --- RENDERING FUNCTIONS ---
+
+        /** Renders a single product card HTML block */
+        function createProductCard(product, isFeatured = false) {
+            const imageUrl = product.imageUrl && product.imageUrl.trim() !== '' 
+                ? product.imageUrl 
+                : `https://placehold.co/400x500/FF5555/FFFFFF?text=No%20Image%20Set`;
+
+            return `
+                <div class="product-card">
+                    <!-- Clickable area for PDP -->
+                    <div onclick="navigateTo('product', '${product.id}')" class="cursor-pointer"> 
+                        <div class="product-image-container mb-3 relative">
+                            <img src="${imageUrl}" 
+                                alt="${product.name}" 
+                                onerror="this.onerror=null;this.src='https://placehold.co/400x500/FF5555/FFFFFF?text=Image%20Load%20Error';"
+                                class="w-full h-auto product-image rounded-t-xl aspect-[4/5] object-cover"
+                                loading="lazy">
+                        </div>
+                        <div class="p-4 flex flex-col items-center">
+                            <p class="font-serif-juniper text-lg font-medium text-center">${product.name}</p>
+                            <p class="text-sm text-gray-500 mb-2">${product.category}</p>
+                            <p class="font-bold text-gray-800 mb-3">PKR ${product.pricePKR.toLocaleString('en-US')}</p>
+                        </div>
+                    </div>
+                    <!-- Separate Add to Cart button for immediate purchase -->
+                    <div class="px-4 pb-4 w-full">
+                        <button onclick="addToCart('${product.id}')" class="w-full px-5 py-2 text-sm tailwind-bg-green tailwind-cream font-semibold rounded-lg hover:opacity-90 transition duration-300">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        /** Renders the Product Detail Page (PDP) */
+        function renderProductDetailPage(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            currentView = 'product';
+            currentProductId = productId;
+
+            if (!product) {
+                appContainer.innerHTML = `
+                    <div class="container mx-auto px-4 py-16 text-center">
+                        <h1 class="font-serif-juniper text-4xl tailwind-green font-bold mb-4">Product Not Found</h1>
+                        <p class="text-gray-600 mb-8">We can't seem to find the product you're looking for.</p>
+                        <button onclick="navigateTo('shop')" class="px-8 py-3 text-sm border-2 tailwind-border-gold tailwind-gold font-semibold tracking-wider rounded-lg hover:bg-gray-100 transition duration-300">
+                            Back to Shop
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const imageUrl = product.imageUrl && product.imageUrl.trim() !== '' 
+                ? product.imageUrl 
+                : `https://placehold.co/800x1000/FF5555/FFFFFF?text=No%20Image%20Set`;
+
+            // Simple mock for available sizes
+            const availableSizes = ['XS', 'S', 'M', 'L', 'XL']; 
+            const selectedSize = 'M'; // Default selection for demo
+
+            appContainer.innerHTML = `
+                <section class="container mx-auto px-4 py-12 md:py-16">
+                    <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 bg-white p-6 md:p-10 rounded-xl shadow-xl">
+                        
+                        <!-- 1. Product Image Gallery -->
+                        <div class="lg:w-1/2">
+                            <img src="${imageUrl}" 
+                                 alt="${product.name}" 
+                                 onerror="this.onerror=null;this.src='https://placehold.co/800x1000/FF5555/FFFFFF?text=Image%20Load%20Error';"
+                                 class="w-full h-auto object-cover aspect-[4/5] rounded-xl shadow-lg border border-gray-100"
+                                 loading="eager">
+                        </div>
+
+                        <!-- 2. Product Details & Purchase Controls -->
+                        <div class="lg:w-1/2 pt-4">
+                            <p class="text-sm text-gray-500 mb-2 uppercase">${product.category}</p>
+                            <h1 class="font-serif-juniper text-3xl md:text-4xl tailwind-green font-bold mb-3">${product.name}</h1>
+                            <p class="text-2xl font-bold text-gray-800 mb-6">PKR ${product.pricePKR.toLocaleString('en-US')}</p>
+
+                            <!-- Short Description -->
+                            <div class="mb-6">
+                                <h3 class="font-semibold text-gray-700 mb-2">Product Overview</h3>
+                                <p class="text-gray-600 leading-relaxed text-sm">${product.description || 'No detailed description provided yet. Check back later!'}</p>
+                            </div>
+
+                            <!-- Size Selector -->
+                            <div class="mb-8">
+                                <label class="block text-sm font-semibold tailwind-green mb-3">Select Size (UK)</label>
+                                <div class="flex space-x-3">
+                                    ${availableSizes.map(size => `
+                                        <button class="w-10 h-10 border-2 rounded-lg font-medium text-sm transition duration-200 
+                                            ${size === selectedSize ? 'tailwind-bg-green tailwind-cream border-green' : 'border-gray-300 hover:border-gray-500 bg-gray-50'}"
+                                            onclick="showTemporaryMessage('Size ${size} selected for demo.', 'green')">
+                                            ${size}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <!-- Add to Cart Button -->
+                            <button onclick="addToCart('${product.id}')" class="w-full py-3 text-lg tailwind-bg-green tailwind-cream font-semibold rounded-lg shadow-md hover:opacity-90 transition duration-300 transform hover:scale-[1.005]">
+                                ADD TO CART - PKR ${product.pricePKR.toLocaleString('en-US')}
+                            </button>
+                            <p class="text-xs text-gray-500 mt-2 text-center">Nationwide shipping available | Cash on Delivery accepted</p>
+
+                            <!-- Detailed Specifications Section (Material, Size Chart, Care) -->
+                            <div class="mt-8 pt-6 border-t border-gray-100">
+                                <h2 class="font-serif-juniper text-xl tailwind-green font-semibold mb-3">Detailed Product Information</h2>
+                                <div class="space-y-4 text-gray-600 text-sm">
+                                    <p class="whitespace-pre-wrap">${product.sizeGuide || 'No specific size guide or material information available. Please use the Admin Panel to add specifications (Fabric, UK Sizes, Wash Care etc.).'}</p>
+                                    
+                                    <h3 class="font-semibold tailwind-green pt-2">Default Sizing Information (UK)</h3>
+                                    <p>Our standard sizes run from UK 8 to UK 16 (XS-XL).</p>
+                                    
+                                    <h3 class="font-semibold tailwind-green pt-2">SKU / Product Code</h3>
+                                    <p>${product.sku || 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            `;
+        }
+
+        /** Renders the multi-step checkout view */
+        function renderCheckoutPage(step = 1) {
+            currentView = 'checkout';
+            currentCheckoutStep = step;
+            window.scrollTo(0, 0);
+
+            if (cart.length === 0 && step < 3) {
+                navigateTo('cart');
+                showTemporaryMessage("Your cart is empty. Cannot proceed to checkout.", 'red');
+                return;
+            }
+
+            const { subtotal, shipping, total } = calculateCartTotals();
+            
+            // --- Helper for Step Indicators ---
+            const renderStepIndicator = (stepNum, title) => {
+                const isComplete = stepNum < currentCheckoutStep;
+                const isActive = stepNum === currentCheckoutStep;
+                return `
+                    <div class="step flex items-center ${isActive ? 'active' : ''} ${isComplete ? 'complete' : ''} cursor-pointer" 
+                        onclick="${stepNum < currentCheckoutStep ? `MapsTo('checkout', null, ${stepNum})` : ''}">
+                        <div class="step-circle w-8 h-8 flex items-center justify-center rounded-full border-2 text-sm font-semibold mr-3 transition duration-300 ${isComplete ? 'border-gold bg-gold text-white' : (isActive ? 'border-green bg-cream text-green' : 'border-gray-300 bg-gray-100 text-gray-500')}">
+                            ${isComplete ? '&#10003;' : stepNum}
+                        </div>
+                        <span class="text-sm font-medium hidden md:inline">${title}</span>
+                    </div>
+                `;
+            };
+
+            // --- Helper for Summary Card ---
+            const renderSummaryCard = () => {
+                const itemsHtml = cart.map(item => `
+                    <div class="flex justify-between items-center text-xs py-1">
+                        <span class="text-gray-600">${item.quantity} x ${item.name}</span>
+                        <span class="font-medium">PKR ${(item.pricePKR * item.quantity).toLocaleString('en-US')}</span>
+                    </div>
+                `).join('');
+
+                return `
+                    <div class="bg-white p-6 rounded-xl shadow-lg h-fit border tailwind-border-gold">
+                        <h3 class="font-serif-juniper text-xl mb-4 tailwind-green font-semibold border-b pb-2">Order Summary</h3>
+                        
+                        <!-- Items -->
+                        <div class="mb-4 space-y-2 border-b pb-4">
+                            ${itemsHtml}
+                        </div>
+                        
+                        <!-- Totals -->
+                        <div class="space-y-3 text-gray-700">
+                            <div class="flex justify-between text-sm"><span>Subtotal:</span><span>PKR ${subtotal.toLocaleString('en-US')}</span></div>
+                            <div class="flex justify-between text-sm"><span>Shipping (Nationwide):</span><span>PKR ${shipping.toLocaleString('en-US')}</span></div>
+                            <div class="flex justify-between text-lg font-bold border-t pt-3">
+                                <span>Order Total:</span>
+                                <span class="tailwind-green">PKR ${total.toLocaleString('en-US')}</span>
+                            </div>
+                        </div>
+                        ${step > 1 ? `<p class="text-xs text-center text-gray-500 mt-4">Edit cart in the <a href="#" onclick="navigateTo('cart')" class="underline">Shopping Cart</a> view.</p>` : ''}
+                    </div>
+                `;
+            };
+
+            let stepContentHtml = '';
+
+            // --- Step 1: Shipping Information ---
+            if (step === 1) {
+                stepContentHtml = `
+                    <h2 class="font-serif-juniper text-2xl tailwind-green font-semibold mb-6">1. Shipping Information</h2>
+                    <form id="shipping-form" class="space-y-4">
+                        <div>
+                            <label for="fullName" class="block text-sm font-medium tailwind-green">Full Name</label>
+                            <input type="text" id="fullName" value="${shippingInfo.fullName}" required class="mt-1 w-full p-3 border border-gray-300 rounded-lg" placeholder="John Doe">
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-1/2">
+                                <label for="email" class="block text-sm font-medium tailwind-green">Email</label>
+                                <input type="email" id="email" value="${shippingInfo.email}" required class="mt-1 w-full p-3 border border-gray-300 rounded-lg" placeholder="email@example.com">
+                            </div>
+                            <div class="w-1/2">
+                                <label for="phone" class="block text-sm font-medium tailwind-green">Phone Number</label>
+                                <input type="tel" id="phone" value="${shippingInfo.phone}" required class="mt-1 w-full p-3 border border-gray-300 rounded-lg" placeholder="03XXXXXXXXX">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="address" class="block text-sm font-medium tailwind-green">Shipping Address (House #, Street, Area)</label>
+                            <textarea id="address" rows="3" required class="mt-1 w-full p-3 border border-gray-300 rounded-lg" placeholder="A-45, Street 10, Gulberg 3">${shippingInfo.address}</textarea>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-1/2">
+                                <label for="city" class="block text-sm font-medium tailwind-green">City</label>
+                                <input type="text" id="city" value="${shippingInfo.city}" required class="mt-1 w-full p-3 border border-gray-300 rounded-lg" placeholder="Lahore">
+                            </div>
+                            <div class="w-1/2">
+                                <label for="country" class="block text-sm font-medium tailwind-green">Country</label>
+                                <input type="text" id="country" value="${shippingInfo.country}" readonly class="mt-1 w-full p-3 border border-gray-300 rounded-lg bg-gray-100 font-semibold" disabled>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-3 text-lg tailwind-bg-green tailwind-cream font-semibold rounded-lg hover:opacity-90 transition duration-300 mt-6">
+                            CONTINUE TO REVIEW
+                        </button>
+                    </form>
+                `;
+            } 
+            
+            // --- Step 2: Review and Payment Method ---
+            else if (step === 2) {
+                stepContentHtml = `
+                    <h2 class="font-serif-juniper text-2xl tailwind-green font-semibold mb-6">2. Review Order & Payment</h2>
+                    
+                    <!-- Shipping Address Review -->
+                    <div class="bg-gray-50 p-5 rounded-lg mb-6 border">
+                        <div class="flex justify-between items-center mb-3 border-b pb-2">
+                            <h3 class="font-semibold tailwind-green">Shipping To</h3>
+                            <button onclick="navigateTo('checkout', null, 1)" class="text-sm text-blue-600 hover:underline">Edit</button>
+                        </div>
+                        <p class="text-sm">${shippingInfo.fullName}</p>
+                        <p class="text-sm">${shippingInfo.address}, ${shippingInfo.city}, ${shippingInfo.country}</p>
+                        <p class="text-sm mt-2">Contact: ${shippingInfo.phone} | ${shippingInfo.email}</p>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="p-5 rounded-lg mb-6 border bg-white shadow-md">
+                        <h3 class="font-semibold tailwind-green mb-3">Payment Method</h3>
+                        <div class="flex items-center p-3 border-2 border-green-500 bg-green-50 rounded-lg">
+                            <input type="radio" name="paymentMethod" id="cod" value="COD" checked class="mr-3 text-green-700 focus:ring-green-500">
+                            <label for="cod" class="font-medium text-green-700">Cash on Delivery (COD)</label>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">No bank details required. Pay upon delivery.</p>
+                    </div>
+
+                    <!-- Final Order Totals -->
+                    ${renderSummaryCard()}
+
+                    <button onclick="placeOrder()" class="w-full py-3 text-lg tailwind-bg-gold tailwind-cream font-semibold rounded-lg shadow-md hover:opacity-90 transition duration-300 mt-6">
+                        PLACE ORDER (PKR ${total.toLocaleString('en-US')})
+                    </button>
+                    <button onclick="navigateTo('checkout', null, 1)" class="w-full py-2 text-sm text-gray-600 font-medium rounded-lg hover:bg-gray-100 transition duration-300 mt-2">
+                        &larr; Back to Shipping
+                    </button>
+                `;
+            } 
+            
+            // --- Step 3: Confirmation (Should be handled by placeOrder() which shows the modal) ---
+            else if (step === 3) {
+                // This step is generally handled by the modal for a cleaner user experience, 
+                // but included here for completeness of the SPA view structure.
+                stepContentHtml = `
+                    <h2 class="font-serif-juniper text-2xl tailwind-green font-semibold mb-6">3. Order Confirmation</h2>
+                    <div class="text-center p-10 bg-white rounded-xl shadow-inner border tailwind-border-gold">
+                        <div class="w-16 h-16 mx-auto mb-4 tailwind-bg-green text-white rounded-full flex items-center justify-center text-3xl">&#10003;</div>
+                        <h3 class="font-serif-juniper text-xl font-semibold mb-2">Order Placed Successfully!</h3>
+                        <p class="text-gray-600 mb-4">Your order is confirmed and will be processed shortly.</p>
+                        <p class="text-sm font-semibold">Total Paid (via COD): PKR ${total.toLocaleString('en-US')}</p>
+                        <p class="text-xs text-gray-500 mt-4">A confirmation email has been sent to ${shippingInfo.email}.</p>
+                        <button onclick="navigateTo('shop')" class="mt-8 px-8 py-3 text-sm border-2 tailwind-border-gold tailwind-gold font-semibold tracking-wider rounded-lg hover:bg-gray-100 transition duration-300">
+                            Continue Shopping
+                        </button>
+                    </div>
+                `;
+            }
+
+
+            appContainer.innerHTML = `
+                <section class="container mx-auto px-4 py-16">
+                    <h1 class="font-serif-juniper text-4xl md:text-5xl text-center mb-10 tailwind-green font-bold">Checkout</h1>
+                    
+                    <!-- Step Indicator -->
+                    <div class="flex justify-center mb-10 space-x-4 border-b pb-4">
+                        ${renderStepIndicator(1, 'Shipping')}
+                        <div class="flex-grow h-0.5 ${currentCheckoutStep > 1 ? 'tailwind-bg-gold' : 'bg-gray-300'} my-auto transition-colors duration-300"></div>
+                        ${renderStepIndicator(2, 'Review & Payment')}
+                        <div class="flex-grow h-0.5 ${currentCheckoutStep > 2 ? 'tailwind-bg-gold' : 'bg-gray-300'} my-auto transition-colors duration-300"></div>
+                        ${renderStepIndicator(3, 'Confirmation')}
+                    </div>
+                    
+                    <div class="flex flex-col lg:flex-row gap-8">
+                        <!-- Main Content (Shipping/Review) -->
+                        <div class="lg:w-2/3 bg-white p-6 rounded-xl shadow-lg border">
+                            ${stepContentHtml}
+                        </div>
+                        
+                        <!-- Summary (Hidden on Confirmation) -->
+                        <div class="lg:w-1/3 ${step === 3 ? 'hidden' : ''}">
+                            ${renderSummaryCard()}
+                        </div>
+                    </div>
+                </section>
+            `;
+            
+            // Re-attach event listener for the shipping form submission
+            if (step === 1) {
+                document.getElementById('shipping-form').addEventListener('submit', handleShippingFormSubmit);
+            }
+        }
+        
+        /** Handles the submission of the Shipping Information form (Step 1) */
+        function handleShippingFormSubmit(e) {
+            e.preventDefault();
+            
+            // Update global shippingInfo object and local storage
+            shippingInfo.fullName = document.getElementById('fullName').value.trim();
+            shippingInfo.email = document.getElementById('email').value.trim();
+            shippingInfo.phone = document.getElementById('phone').value.trim();
+            shippingInfo.address = document.getElementById('address').value.trim();
+            shippingInfo.city = document.getElementById('city').value.trim();
+            localStorage.setItem('juniperShippingInfo', JSON.stringify(shippingInfo));
+
+            // Proceed to the next step
+            navigateTo('checkout', null, 2); // Pass step number as filter parameter
+        }
+
+        /** Simulates the final order placement (Step 2 to 3) */
+        window.placeOrder = () => {
+            const { total } = calculateCartTotals();
+            
+            // 1. Simulate Order Processing (Clear Cart and Storage)
+            cart = [];
+            localStorage.removeItem('juniperCart');
+            updateCartUI(); // Update UI immediately
+
+            // 2. Show Confirmation Modal
+            const statusTitle = document.getElementById('checkout-status-title');
+            const statusMessage = document.getElementById('checkout-status-message');
+            
+            statusTitle.textContent = "Order Placed!";
+            statusMessage.innerHTML = `Your order of <span class="font-bold tailwind-green">PKR ${total.toLocaleString('en-US')}</span> has been successfully placed via Cash on Delivery. Thank you for shopping with Juniper & Co.`;
+
+            checkoutStatusModal.classList.remove('hidden');
+            checkoutStatusModal.classList.add('flex');
+            
+            // 3. (Optional) Log to Firestore (e.g., in a 'orders' collection)
+            console.log("Order simulated and placed!");
+        }
+
+
+        /** Renders the Home Page View (Updated to use websiteSettings) */
+        function renderHomePage() {
+            currentView = 'home';
+            const featuredProducts = allProducts.slice(0, 4);
+            // NOTE: We pass 'product' view and product.id to navigateTo in the card HTML
+            const productsHtml = featuredProducts.map(p => createProductCard(p, true)).join('');
+            
+            // Default content if settings haven't loaded yet
+            const heroTitle = websiteSettings.heroTitle || "The Spring Whisper Collection";
+            const heroSubtitle = websiteSettings.heroSubtitle || "Effortless Elegance, Rooted in Tradition.";
+            const aboutTitle = websiteSettings.aboutTitle || "Rooted in Tradition, Crafted for Tomorrow.";
+            const aboutText = websiteSettings.aboutText || "Juniper & Co. is a celebration of enduring quality and natural elegance. The juniper sprig symbolizes a timeless spirit, a philosophy we weave into every thread. We are committed to exquisite Pakistani craftsmanship, delivering premium Eastern wear designed for the modern woman who values tradition, quality, and effortless style.";
+
+            appContainer.innerHTML = `
+                <!-- 1. Hero Section -->
+                <section class="relative h-[60vh] md:h-[85vh] flex items-center justify-center text-center overflow-hidden mb-16">
+                    <img src="https://placehold.co/1200x800/E8E3DA/3A5A40?text=Airy+Lifestyle+Photography+-+The+Latest+Collection" 
+                        alt="Current Collection Showcase" 
+                        class="absolute inset-0 w-full h-full object-cover opacity-90 transition duration-500 ease-in-out hover:opacity-100"
+                        loading="lazy">
+                    <div class="relative p-8 bg-white/70 rounded-xl max-w-lg mx-auto shadow-2xl backdrop-blur-sm">
+                        <h1 class="font-serif-juniper text-3xl md:text-5xl font-extrabold mb-3 tailwind-green" id="hero-title">${heroTitle}</h1>
+                        <p class="text-base md:text-xl text-gray-700 mb-6 font-medium" id="hero-subtitle">${heroSubtitle}</p>
+                        <a href="#" onclick="navigateTo('shop')" class="inline-block px-10 py-3 tailwind-bg-green tailwind-cream font-semibold tracking-wider rounded-lg shadow-lg hover:shadow-xl hover:opacity-90 transition duration-300 transform hover:scale-[1.02]">
+                            SHOP NOW
+                        </a>
+                    </div>
+                </section>
+
+                <!-- 2. Featured Categories (Now links to filtered shop view) -->
+                <section class="container mx-auto px-4 mb-20">
+                    <h2 class="font-serif-juniper text-3xl md:text-4xl text-center mb-12 tailwind-green font-semibold">Shop By Aesthetic</h2>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+                        <div class="group relative rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-500 transform hover:-translate-y-1"><img src="https://placehold.co/350x450/E8E3DA/3A5A40?text=Unstitched+Fabric" alt="Unstitched Fabric" class="w-full h-full object-cover aspect-[4/5] transition duration-500 group-hover:scale-105" loading="lazy"><div class="absolute inset-0 bg-black/20 flex items-end justify-center p-6"><h3 class="font-serif-juniper text-xl text-white font-bold tracking-wider border-b-2 border-white group-hover:border-gold transition duration-300">Unstitched</h3></div><a href="#" onclick="navigateTo('shop', null, 'Unstitched')" class="absolute inset-0" aria-label="Shop Unstitched"></a></div>
+                        <div class="group relative rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-500 transform hover:-translate-y-1"><img src="https://placehold.co/350x450/E8E3DA/3A5A40?text=Ready-to-Wear+Pret" alt="Ready-to-Wear Prêt" class="w-full h-full object-cover aspect-[4/5] transition duration-500 group-hover:scale-105" loading="lazy"><div class="absolute inset-0 bg-black/20 flex items-end justify-center p-6"><h3 class="font-serif-juniper text-xl text-white font-bold tracking-wider border-b-2 border-white group-hover:border-gold transition duration-300">Ready-to-Wear (Prêt)</h3></div><a href="#" onclick="navigateTo('shop', null, 'Ready-to-Wear (Prêt)')" class="absolute inset-0" aria-label="Shop Ready-to-Wear (Prêt)"></a></div>
+                        <div class="group relative rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-500 transform hover:-translate-y-1"><img src="https://placehold.co/350x450/E8E3DA/3A5A40?text=Formal+Wear" alt="Formal Wear" class="w-full h-full object-cover aspect-[4/5] transition duration-500 group-hover:scale-105" loading="lazy"><div class="absolute inset-0 bg-black/20 flex items-end justify-center p-6"><h3 class="font-serif-juniper text-xl text-white font-bold tracking-wider border-b-2 border-white group-hover:border-gold transition duration-300">Formals</h3></div><a href="#" onclick="navigateTo('shop', null, 'Formals')" class="absolute inset-0" aria-label="Shop Formals"></a></div>
+                        <div class="group relative rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-500 transform hover:-translate-y-1"><img src="https://placehold.co/350x450/E8E3DA/3A5A40?text=Accessories+and+Shawls" alt="Accessories" class="w-full h-full object-cover aspect-[4/5] transition duration-500 group-hover:scale-105" loading="lazy"><div class="absolute inset-0 bg-black/20 flex items-end justify-center p-6"><h3 class="font-serif-juniper text-xl text-white font-bold tracking-wider border-b-2 border-white group-hover:border-gold transition duration-300">Accessories</h3></div><a href="#" onclick="navigateTo('shop', null, 'Accessories')" class="absolute inset-0" aria-label="Shop Accessories"></a></div>
+                    </div>
+                </section>
+
+                <!-- 3. "Our Story" Block (Updated to use websiteSettings) -->
+                <section class="container mx-auto px-4 mb-20 py-16">
+                    <div class="flex flex-col lg:flex-row rounded-xl overflow-hidden shadow-2xl border border-gray-100">
+                        <div class="lg:w-1/2"><img src="https://placehold.co/600x400/DED9D1/3A5A40?text=Pakistani+Craftsmanship+and+Fabric" alt="Fabric Texture and Craftsmanship" class="w-full h-full object-cover aspect-[3/2] lg:aspect-auto" loading="lazy"></div>
+                        <div class="lg:w-1/2 p-8 md:p-16 flex flex-col justify-center tailwind-bg-cream">
+                            <h2 class="font-serif-juniper text-2xl md:text-4xl mb-4 tailwind-green font-semibold" id="about-title">${aboutTitle}</h2>
+                            <p class="text-gray-700 leading-relaxed mb-6 text-sm md:text-base" id="about-text">${aboutText}</p>
+                            <a href="#" class="text-sm font-medium tailwind-gold border-b border-gold hover:opacity-80 transition duration-300 self-start">READ OUR FULL STORY &rarr;</a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. New Arrivals (Featured Products from Firestore) (Unchanged) -->
+                <section class="container mx-auto px-4 mb-20">
+                    <h2 class="font-serif-juniper text-3xl md:text-4xl text-center mb-12 tailwind-green font-semibold">New Arrivals</h2>
+                    <div id="home-products-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+                        ${productsHtml || `<p class="col-span-full text-center text-gray-500 py-10">No products found. Add some via the Admin panel (👤 icon)!</p>`}
+                    </div>
+                    <div class="text-center mt-12">
+                        <a href="#" onclick="navigateTo('shop')" class="inline-block px-8 py-3 text-sm border-2 tailwind-border-gold tailwind-gold font-semibold tracking-wider rounded-lg hover:bg-gray-100 transition duration-300">
+                            VIEW ALL COLLECTIONS
+                        </a>
+                    </div>
+                </section>
+
+                <!-- 5. Instagram/Lookbook Feed (Unchanged) -->
+                <section class="container mx-auto px-4 mb-20">
+                    <h2 class="font-serif-juniper text-3xl md:text-4xl text-center mb-10 tailwind-green font-semibold">#JuniperAndCo</h2>
+                    <div class="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-4">
+                        <img src="https://placehold.co/300x300/F8F6F1/3A5A40?text=Post+1" alt="Instagram Post 1" class="w-full h-auto object-cover aspect-square rounded-lg transition duration-300 hover:opacity-80 cursor-pointer" loading="lazy">
+                        <img src="https://placehold.co/300x300/DED9D1/3A5A40?text=Post+2" alt="Instagram Post 2" class="w-full h-auto object-cover aspect-square rounded-lg transition duration-300 hover:opacity-80 cursor-pointer" loading="lazy">
+                        <img src="https://placehold.co/300x300/F8F6F1/3A5A40?text=Post+3" alt="Instagram Post 3" class="w-full h-auto object-cover aspect-square rounded-lg transition duration-300 hover:opacity-80 cursor-pointer" loading="lazy">
+                        <img src="https://placehold.co/300x300/DED9D1/3A5A40?text=Post+4" alt="Instagram Post 4" class="w-full h-auto object-cover aspect-square rounded-lg transition duration-300 hover:opacity-80 cursor-pointer hidden sm:block" loading="lazy">
+                        <img src="https://placehold.co/300x300/F8F6F1/3A5A40?text=Post+5" alt="Instagram Post 5" class="w-full h-auto object-cover aspect-square rounded-lg transition duration-300 hover:opacity-80 cursor-pointer hidden md:block" loading="lazy">
+                        <img src="https://placehold.co/300x300/DED9D1/3A5A40?text=Post+6" alt="Instagram Post 6" class="w-full h-auto object-cover aspect-square rounded-lg transition duration-300 hover:opacity-80 cursor-pointer hidden lg:block" loading="lazy">
+                    </div>
+                </section>
+            `;
+        }
+        
+        /** Applies a filter to the shop and re-renders the shop page. */
+        window.applyShopFilter = (filter) => {
+            shopFilter = filter;
+            navigateTo('shop'); // Re-renders the shop page with the new global filter state
+        }
+
+
+        /** Renders the full Product Listing Page (PLP) View */
+        function renderShopPage(initialFilter = null) {
+            currentView = 'shop';
+            
+            // 1. Update filter state if an initial filter is provided (from category link click)
+            if (initialFilter) {
+                shopFilter = initialFilter;
+            }
+
+            // 2. Apply filtering
+            let filteredProducts = allProducts;
+            if (shopFilter !== 'All') {
+                filteredProducts = allProducts.filter(p => p.category === shopFilter);
+            }
+
+            const productsHtml = filteredProducts.map(p => createProductCard(p)).join('');
+            const availableCategories = ['All', 'Unstitched', 'Ready-to-Wear (Prêt)', 'Formals', 'Accessories'];
+            
+            appContainer.innerHTML = `
+                <section class="container mx-auto px-4 py-16">
+                    <h1 class="font-serif-juniper text-4xl md:text-5xl text-center mb-4 tailwind-green font-bold">The Full Collection</h1>
+                    <p class="text-center text-lg text-gray-600 mb-12">Luxury Pret, Unstitched Fabric, and Formals designed for timeless elegance.</p>
+                    
+                    <div class="flex flex-col lg:flex-row gap-8">
+                        <!-- Filters -->
+                        <aside class="lg:w-1/4 p-4 rounded-xl border border-gray-200 bg-white shadow-sm h-fit">
+                            <h3 class="font-serif-juniper text-xl mb-4 tailwind-green font-semibold border-b pb-2">Filter By</h3>
+                            <div class="space-y-4 text-sm text-gray-700">
+                                <label class="block font-medium">Category</label>
+                                <select id="category-filter-select" onchange="applyShopFilter(this.value)" class="w-full p-2 border rounded-lg bg-gray-50">
+                                    ${availableCategories.map(cat => `
+                                        <option value="${cat}" ${cat === shopFilter ? 'selected' : ''}>${cat}</option>
+                                    `).join('')}
+                                </select>
+                                <label class="block font-medium pt-2">Price Range (PKR)</label>
+                                <input type="range" min="1000" max="50000" value="50000" class="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer" disabled>
+                                <p class="text-xs text-right">Up to PKR 50,000</p>
+                                <button class="w-full py-2 text-sm tailwind-bg-green tailwind-cream rounded-lg mt-4 opacity-70 cursor-not-allowed">Price Filter (Demo)</button>
+                            </div>
+                        </aside>
+                        
+                        <!-- Product Grid -->
+                        <div class="lg:w-3/4">
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
+                                ${productsHtml || `<p class="col-span-full text-center text-gray-500 py-10">No products found matching the filter "${shopFilter}".</p>`}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        /** Renders the Shopping Cart View */
+        function renderCartPage() {
+            currentView = 'cart';
+            let cartItemsHtml = '';
+            
+            const { subtotal, shipping, total } = calculateCartTotals();
+
+            if (cart.length === 0) {
+                cartItemsHtml = `
+                    <p class="col-span-2 text-center text-gray-500 py-10">
+                        Your cart is empty. <a href="#" onclick="navigateTo('shop')" class="tailwind-green font-semibold hover:underline">Start shopping</a> to find your next elegant piece.
+                    </p>
+                `;
+            } else {
+                cartItemsHtml = cart.map(item => {
+                    const itemTotal = item.pricePKR * item.quantity;
+                    
+                    // Fallback image for cart items
+                    const itemImageUrl = item.imageUrl && item.imageUrl.trim() !== '' 
+                        ? item.imageUrl 
+                        : `https://placehold.co/100x100/FF5555/FFFFFF?text=No%20Image`;
+
+                    return `
+                        <div class="flex items-center border-b border-gray-100 py-4">
+                            <!-- Image -->
+                            <img src="${itemImageUrl}" 
+                                 alt="${item.name}" 
+                                 onerror="this.onerror=null;this.src='https://placehold.co/100x100/FF5555/FFFFFF?text=Error';"
+                                 class="w-16 h-16 object-cover rounded-lg mr-4 border border-gray-100">
+                            <!-- Details -->
+                            <div class="flex-grow">
+                                <p class="font-serif-juniper font-medium">${item.name}</p>
+                                <p class="text-sm text-gray-500">Price: PKR ${item.pricePKR.toLocaleString('en-US')}</p>
+                            </div>
+                            <!-- Quantity Controls -->
+                            <div class="flex items-center space-x-2 text-sm mx-4">
+                                <button onclick="updateCartItemQuantity('${item.id}', -1)" class="w-6 h-6 border rounded-full text-gray-700 hover:bg-gray-100 transition duration-300" aria-label="Decrease Quantity">-</button>
+                                <span class="font-semibold">${item.quantity}</span>
+                                <button onclick="updateCartItemQuantity('${item.id}', 1)" class="w-6 h-6 border rounded-full text-gray-700 hover:bg-gray-100 transition duration-300" aria-label="Increase Quantity">+</button>
+                            </div>
+                            <!-- Total -->
+                            <p class="w-24 text-right font-bold text-gray-800 flex-shrink-0">PKR ${itemTotal.toLocaleString('en-US')}</p>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            appContainer.innerHTML = `
+                <section class="container mx-auto px-4 py-16">
+                    <h1 class="font-serif-juniper text-4xl md:text-5xl text-center mb-12 tailwind-green font-bold">Your Shopping Cart</h1>
+                    
+                    <div class="flex flex-col lg:flex-row gap-8">
+                        <!-- Cart Items List -->
+                        <div class="lg:w-2/3 bg-white p-6 rounded-xl shadow-lg">
+                            ${cartItemsHtml}
+                        </div>
+                        
+                        <!-- Summary -->
+                        <div class="lg:w-1/3 bg-white p-6 rounded-xl shadow-lg h-fit border tailwind-border-gold">
+                            <h3 class="font-serif-juniper text-xl mb-4 tailwind-green font-semibold border-b pb-2">Order Summary</h3>
+                            <div class="space-y-3 text-gray-700">
+                                <div class="flex justify-between text-sm"><span>Subtotal:</span><span>PKR ${subtotal.toLocaleString('en-US')}</span></div>
+                                <div class="flex justify-between text-sm"><span>Shipping (Nationwide):</span><span>PKR ${shipping.toLocaleString('en-US')}</span></div>
+                                <div class="flex justify-between text-lg font-bold border-t pt-3">
+                                    <span>Order Total:</span>
+                                    <span class="tailwind-green">PKR ${total.toLocaleString('en-US')}</span>
+                                </div>
+                            </div>
+                            <!-- FIXED: Correctly calls navigateTo('checkout', null, 1) for step 1 -->
+                            <button class="mt-8 w-full py-3 tailwind-bg-green tailwind-cream font-semibold rounded-lg hover:opacity-90 transition duration-300 ${cart.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}" 
+                                onclick="${cart.length > 0 ? `MapsTo('checkout', null, 1)` : `showTemporaryMessage('Add items to cart first!', 'red')`}"
+                                ${cart.length === 0 ? 'disabled' : ''}>
+                                PROCEED TO CHECKOUT
+                            </button>
+                            <p class="text-xs text-center text-gray-500 mt-3">Accepting Cash on Delivery (COD) across Pakistan.</p>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        /** Navigates between application views (SPA logic) 
+         * @param {string} view - The target view (home, shop, cart, product, checkout)
+         * @param {string|null} dataId - The ID of the specific item (e.g., product ID)
+         * @param {string|number|null} filterOrStep - Filter string for shop or step number for checkout
+        */
+        window.navigateTo = (view, dataId = null, filterOrStep = null) => {
+            window.scrollTo(0, 0); // Scroll to top on navigation
+            
+            if (view === 'shop') {
+                renderShopPage(filterOrStep);
+            } else if (view === 'cart') {
+                renderCartPage();
+            } else if (view === 'product' && dataId) {
+                renderProductDetailPage(dataId);
+            } else if (view === 'checkout' && filterOrStep) {
+                // filterOrStep is the step number (1, 2, or 3)
+                renderCheckoutPage(filterOrStep);
+            } else {
+                renderHomePage();
+            }
+            currentView = view; // Update currentView after rendering
+            currentProductId = dataId; // Update product ID state
+        };
+
+
+        // --- FIREBASE / DATA LOADING ---
+
+        /** Attaches the real-time listener to the Firestore products collection. */
+        function subscribeToProducts() {
+            if (!db || !userId) return;
+
+            const productsColPath = `artifacts/${appId}/public/data/products`;
+            const productsColRef = collection(db, productsColPath);
+
+            onSnapshot(productsColRef, (snapshot) => {
+                allProducts = []; 
+                snapshot.forEach(doc => {
+                    allProducts.push({ id: doc.id, ...doc.data() });
+                });
+
+                allProducts.sort((a, b) => {
+                    const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+                    const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+                    return dateB - dateA;
+                });
+
+                console.log(`Products updated in real-time. Count: ${allProducts.length}`);
+                
+                // Re-render the correct view after data update
+                if (currentView === 'product' && currentProductId) {
+                    renderProductDetailPage(currentProductId);
+                } else if (currentView === 'shop') {
+                    renderShopPage();
+                } else if (currentView === 'cart') {
+                    renderCartPage();
+                } else if (currentView === 'checkout') {
+                    renderCheckoutPage(currentCheckoutStep);
+                } else {
+                    renderHomePage();
+                }
+
+            }, (error) => {
+                console.error("Error fetching products:", error);
+            });
+        }
+        
+        /** Attaches the real-time listener to the general website settings document. */
+        function subscribeToWebsiteSettings() {
+            if (!db || !userId) return;
+
+            const settingsDocPath = `artifacts/${appId}/public/data/settings`;
+            const settingsDocRef = doc(db, settingsDocPath, 'websiteInfo');
+
+            onSnapshot(settingsDocRef, (docSnapshot) => {
+                if (docSnapshot.exists()) {
+                    websiteSettings = docSnapshot.data();
+                    console.log("Website settings updated:", websiteSettings);
+                } else {
+                    console.log("Website settings document does not exist. Using defaults.");
+                    websiteSettings = {
+                        heroTitle: "The Spring Whisper Collection",
+                        heroSubtitle: "Effortless Elegance, Rooted in Tradition.",
+                        aboutTitle: "Rooted in Tradition, Crafted for Tomorrow.",
+                        aboutText: "Juniper & Co. is a celebration of enduring quality and natural elegance. The juniper sprig symbolizes a timeless spirit, a philosophy we weave into every thread. We are committed to exquisite Pakistani craftsmanship, delivering premium Eastern wear designed for the modern woman who values tradition, quality, and effortless style.",
+                        contactEmail: "info@juniperandco.pk"
+                    };
+                    setDoc(settingsDocRef, websiteSettings, { merge: true }).catch(e => console.error("Error setting initial settings:", e));
+                }
+
+                // If admin modal is open, ensure settings fields are populated
+                if (adminModal.classList.contains('flex')) {
+                    if (settingHeroTitle) settingHeroTitle.value = websiteSettings.heroTitle || '';
+                    if (settingHeroSubtitle) settingHeroSubtitle.value = websiteSettings.heroSubtitle || '';
+                    if (settingAboutTitle) settingAboutTitle.value = websiteSettings.aboutTitle || '';
+                    if (settingAboutText) settingAboutText.value = websiteSettings.aboutText || '';
+                    if (settingContactEmail) settingContactEmail.value = websiteSettings.contactEmail || '';
+                }
+                
+                navigateTo(currentView);
+
+            }, (error) => {
+                console.error("Error fetching website settings:", error);
+            });
+        }
+
+
+        // --- AUTHENTICATION & INITIALIZATION ---
+        async function initializeAppAndAuth() {
+            if (!firebaseConfig) {
+                console.error("Firebase config is missing.");
+                return;
+            }
+
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                await setPersistence(auth, browserLocalPersistence);
+
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        currentUserIdSpan.textContent = userId;
+                        currentAppIdSpan.textContent = appId;
+                        subscribeToProducts(); 
+                        subscribeToWebsiteSettings(); 
+                    } else {
+                        console.log("User signed out or anonymous sign-in failed.");
+                    }
+                    updateCartUI(); 
+                });
+
+            } catch (error) {
+                console.error("Firebase initialization or sign-in failed:", error);
+            }
+        }
+        
+        // --- ADMIN MODAL LOGIC (CMS) ---
+
+        /** Switches the content panel in the admin modal */
+        function switchAdminPanel(panelId) {
+            const panels = [panelProducts, panelSettings];
+            const buttons = [tabProducts, tabSettings];
+
+            panels.forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(panelId).classList.remove('hidden');
+            document.getElementById(`tab-${panelId.split('-')[1]}`).classList.add('active');
+        }
+
+        // Tab Event Listeners
+        tabProducts.addEventListener('click', () => switchAdminPanel('panel-products'));
+        tabSettings.addEventListener('click', () => switchAdminPanel('panel-settings'));
+
+        // --- PASSWORD GATE LOGIC ---
+        adminBtn.addEventListener('click', () => {
+            passwordGateModal.classList.remove('hidden');
+            passwordGateModal.classList.add('flex');
+            passwordInput.value = '';
+            passwordMessage.classList.add('hidden');
+            passwordInput.focus();
+        });
+
+        passwordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = passwordInput.value;
+            passwordMessage.classList.add('hidden');
+
+            if (password === ADMIN_PASSWORD) {
+                passwordGateModal.classList.add('hidden');
+                passwordGateModal.classList.remove('flex');
+                
+                // Open the main admin modal and populate fields
+                adminModal.classList.remove('hidden');
+                adminModal.classList.add('flex');
+                switchAdminPanel('panel-products'); // Default to products view
+                
+                // Repopulate with latest settings data
+                if (settingHeroTitle) settingHeroTitle.value = websiteSettings.heroTitle || '';
+                if (settingHeroSubtitle) settingHeroSubtitle.value = websiteSettings.heroSubtitle || '';
+                if (settingAboutTitle) settingAboutTitle.value = websiteSettings.aboutTitle || '';
+                if (settingAboutText) settingAboutText.value = websiteSettings.aboutText || '';
+                if (settingContactEmail) settingContactEmail.value = websiteSettings.contactEmail || '';
+                
+            } else {
+                passwordMessage.textContent = "Incorrect password. Access denied.";
+                passwordMessage.classList.remove('hidden');
+                passwordMessage.classList.add('text-red-500');
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        });
+
+
+        // --- MAIN ADMIN MODAL LOGIC ---
+        closeModalBtn.addEventListener('click', () => {
+            adminModal.classList.add('hidden');
+            adminModal.classList.remove('flex');
+            formMessageProduct.classList.add('hidden');
+            formMessageSettings.classList.add('hidden');
+        });
+
+        // 1. Product Management Form Submission
+        addProductForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            formMessageProduct.classList.add('hidden');
+            
+            if (!db || !userId) {
+                formMessageProduct.textContent = "Error: Database not ready.";
+                formMessageProduct.classList.remove('hidden', 'text-green-600');
+                formMessageProduct.classList.add('text-red-500');
+                return;
+            }
+
+            const name = document.getElementById('productName').value.trim();
+            const pricePKR = parseFloat(document.getElementById('productPrice').value);
+            const category = document.getElementById('productCategory').value;
+            const description = productDescriptionInput.value.trim();
+            const sizeGuide = productSpecsInput.value.trim(); // Renamed to sizeGuide for detail page
+            const material = "Not yet specified"; // Fallback if you want a separate field
+            const sku = document.getElementById('productSku').value.trim();
+            const imageUrl = document.getElementById('productImageUrl').value.trim();
+
+            const newProduct = {
+                name: name,
+                pricePKR: pricePKR,
+                category: category,
+                description: description,
+                sizeGuide: sizeGuide,
+                material: material,
+                sku: sku,
+                imageUrl: imageUrl,
+                createdAt: new Date().toISOString(),
+                addedBy: userId 
+            };
+
+            const productsColRef = collection(db, `artifacts/${appId}/public/data/products`);
+
+            try {
+                document.getElementById('submit-product-btn').disabled = true;
+                await addDoc(productsColRef, newProduct);
+                formMessageProduct.textContent = `Success! '${name}' added. The shop page will update in real-time.`;
+                formMessageProduct.classList.remove('hidden', 'text-red-500');
+                formMessageProduct.classList.add('text-green-600');
+                
+                addProductForm.reset(); 
+                document.getElementById('productImageUrl').value = "https://placehold.co/400x500/E8E3DA/3A5A40?text=New%20Product%20Image";
+                // Reset fields after successful submission
+                productDescriptionInput.value = '';
+                productSpecsInput.value = '';
+
+            } catch (error) {
+                console.error("Error adding product:", error);
+                formMessageProduct.textContent = `Error adding product: ${error.message}`;
+                formMessageProduct.classList.remove('hidden', 'text-green-600');
+                formMessageProduct.classList.add('text-red-500');
+            } finally {
+                document.getElementById('submit-product-btn').disabled = false;
+            }
+        });
+
+        // 2. Website Settings Form Submission
+        editSettingsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            formMessageSettings.classList.add('hidden');
+            
+            if (!db || !userId) {
+                formMessageSettings.textContent = "Error: Database not ready.";
+                formMessageSettings.classList.remove('hidden', 'text-green-600');
+                formMessageSettings.classList.add('text-red-500');
+                return;
+            }
+
+            const updatedSettings = {
+                heroTitle: settingHeroTitle.value.trim(),
+                heroSubtitle: settingHeroSubtitle.value.trim(),
+                aboutTitle: settingAboutTitle.value.trim(),
+                aboutText: settingAboutText.value.trim(),
+                contactEmail: settingContactEmail.value.trim(),
+                lastUpdated: new Date().toISOString(),
+                updatedBy: userId 
+            };
+
+            const settingsDocRef = doc(db, `artifacts/${appId}/public/data/settings`, 'websiteInfo');
+
+            try {
+                document.getElementById('submit-settings-btn').disabled = true;
+                await setDoc(settingsDocRef, updatedSettings);
+                formMessageSettings.textContent = `Success! Website settings saved.`;
+                formMessageSettings.classList.remove('hidden', 'text-red-500');
+                formMessageSettings.classList.add('text-green-600');
+            } catch (error) {
+                console.error("Error saving settings:", error);
+                formMessageSettings.textContent = `Error saving settings: ${error.message}`;
+                formMessageSettings.classList.remove('hidden', 'text-green-600');
+                formMessageSettings.classList.add('text-red-500');
+            } finally {
+                document.getElementById('submit-settings-btn').disabled = false;
+            }
+        });
+
+
+        // Start the application setup
+        initializeAppAndAuth();
+        navigateTo('home');
+    </script>
+
+</body>
+</html>
